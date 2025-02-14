@@ -95,53 +95,53 @@ return {
   },
   system_prompt = function(schema)
     return string.format(
-      [[## Command Runner Tool (`cmd_runner`) – Enhanced Guidelines
+      [[## 命令执行工具（`cmd_runner`）——增强指南
 
-### Purpose:
-- Execute safe, validated shell commands on the user's system when explicitly requested.
+### 目的：
+- 在用户明确请求时，在其系统上执行安全且经过验证的 shell 命令。
 
-### When to Use:
-- Only invoke the command runner when the user specifically asks.
-- Use this tool strictly for command execution; file operations must be handled with the designated Files Tool.
+### 使用场景：
+- 仅在用户明确要求时调用命令执行工具。
+- 此工具仅用于命令执行；文件操作必须使用指定的文件工具（Files Tool）处理。
 
-### Execution Format:
-- Always return an XML markdown code block.
-- Each shell command execution should:
-  - Be wrapped in a CDATA section to protect special characters.
-  - Follow the XML schema exactly.
-- If several commands need to run sequentially, combine them in one XML block with separate <action> entries.
+### 执行格式：
+- 始终以 XML Markdown 代码块的形式返回。
+- 每次执行 shell 命令时需：
+  - 使用 CDATA 区块包裹命令以保护特殊字符。
+  - 严格遵循 XML 结构。
+- 如果需要顺序执行多个命令，应在一个 XML 块中以单独的 `<action>` 条目组合命令。
 
-### XML Schema:
-- The XML must be valid. Each tool invocation should adhere to this structure:
-
-```xml
-%s
-```
-
-- Combine multiple shell commands in one response if needed and they will be executed sequentially:
+### XML 结构：
+- XML 必须有效。每次工具调用都应遵循以下结构：
 
 ```xml
 %s
 ```
 
-- If the user asks you to run tests or a test suite, be sure to include a testing flag so the Neovim editor is aware:
+- 如果需要运行多个 shell 命令，可将它们组合在一个响应中，按顺序执行：
 
 ```xml
 %s
 ```
 
-### Key Considerations
-- **Safety First:** Ensure every command is safe and validated.
-- **User Environment Awareness:**
-  - **Shell**: %s
-  - **Operating System**: %s
-  - **Neovim Version**: %s
-- **User Oversight:** The user retains full control with an approval mechanism before execution.
-- **Extensibility:** If environment details aren’t available (e.g., language version details), output the command first along with a request for more information.
+- 如果用户要求运行测试或测试套件，请务必包含一个测试标志，以便 Neovim 编辑器能够识别：
 
-### Reminder
-- Minimize explanations and focus on returning precise XML blocks with CDATA-wrapped commands.
-- Follow this structure each time to ensure consistency and reliability.]],
+```xml
+%s
+```
+
+### 关键注意事项：
+- **安全优先：** 确保每条命令均安全且经过验证。
+- **用户环境信息：**
+  - **Shell：** %s
+  - **操作系统：** %s
+  - **Neovim 版本：** %s
+- **用户监督：** 用户保留完全控制权，并通过审批机制确认执行。
+- **扩展性：** 如果环境细节不可用（例如语言版本信息），请先输出命令并请求更多信息。
+
+### 提醒：
+- 尽量减少解释，专注于返回精确的包含 CDATA 包裹命令的 XML 块。
+- 每次都遵循此结构，以确保一致性和可靠性。]],
       xml2lua.toXml({ tools = { schema[1] } }), -- Regular
       xml2lua.toXml({ -- Multiple
         tools = {

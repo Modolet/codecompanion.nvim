@@ -267,99 +267,98 @@ return {
   },
   system_prompt = function(schema)
     return fmt(
-      [[### Files Tool (`files`)
+      [[### 文件工具（`files`）
 
-1. **Purpose**: Create/Edit/Delete/Rename/Copy files on the file system.
+1. **目的**：在文件系统中创建、编辑、删除、重命名、复制文件。
 
-2. **Usage**: Return an XML markdown code block for create, edit or delete operations.
+2. **使用方法**：对于创建、编辑或删除操作，返回一个 XML Markdown 代码块。
 
-3. **Key Points**:
-  - **Only use when you deem it necessary**. The user has the final control on these operations through an approval mechanism.
-  - Ensure XML is **valid and follows the schema**
-  - **Include indentation** in the file's content
-  - **Don't escape** special characters
-  - **Wrap contents in a CDATA block**, the contents could contain characters reserved by XML
-  - **Don't duplicate code** in the response. Consider writing code directly into the contents tag of the XML
-  - The user's current working directory in Neovim is `%s`. They may refer to this in their message to you
-  - Make sure the tools xml block is **surrounded by ```xml**
-  - Do not hallucinate. If you can't read a file's contents, say so
+3. **关键点**：
+   - **仅在你认为必要时使用**，用户通过审批机制对这些操作拥有最终控制权。
+   - 确保 XML **有效且符合结构要求**。
+   - **在文件内容中包含正确的缩进**。
+   - **不要转义**特殊字符。
+   - **将文件内容包裹在 CDATA 区块中**，因为内容可能包含 XML 保留字符。
+   - **不要在响应中重复代码**，尽量直接将代码写入 XML 的 `<contents>` 标签中。
+   - 用户当前在 Neovim 中的工作目录是 `%s`，用户可能会在消息中提到这一点。
+   - 确保工具的 XML 块被 **```xml** 包裹。
+   - 不要凭空想象文件内容。如果无法读取文件内容，请如实说明。
 
-4. **Actions**:
+4. **操作**：
 
-a) Create:
-
-```xml
-%s
-```
-- This will ensure a file is created at the specified path with the given content.
-- It will also ensure that any folders that don't exist in the path are created.
-
-b) Read:
+a) 创建文件（Create）：
 
 ```xml
 %s
 ```
-- This will output the contents of a file at the specified path.
+- 确保在指定路径创建文件并写入给定内容。
+- 如果路径中存在不存在的文件夹，会自动创建这些文件夹。
 
-c) Read Lines (inclusively):
-
-```xml
-%s
-```
-- This will read specific line numbers (between the start and end lines, inclusively) in the file at the specified path
-- This can be useful if you have been given the symbolic outline of a file and need to see more of the file's content
-
-d) Edit:
+b) 读取文件内容（Read）：
 
 ```xml
 %s
 ```
+- 读取指定路径文件的内容。
 
-- This will ensure a file is edited at the specified path
-- Ensure that you are terse with which text to search for and replace
-- Be specific about what text to search for and what to replace it with
-- If the text is not found, the file will not be edited
-
-e) Delete:
+c) 读取文件指定行（Read Lines，含起止行）：
 
 ```xml
 %s
 ```
-- This will ensure a file is deleted at the specified path.
+- 读取文件中指定路径范围内的行号（包括起始和结束行）。
+- 如果用户提供了文件的大致结构，但需要查看更多内容时，这会很有用。
 
-f) Rename:
-
-```xml
-%s
-```
-- Ensure `new_path` contains the filename
-
-i) Copy:
+d) 编辑文件（Edit）：
 
 ```xml
 %s
 ```
-- Ensure `new_path` contains the filename
-- Any folders that don't exist in the path will be created
+- 确保编辑指定路径的文件。
+- 对于需要搜索和替换的文本，尽量简洁明确。
+- 明确指出需要查找的文本和替换的内容。
+- 如果未找到指定文本，文件不会被编辑。
 
-j) Move:
-
-```xml
-%s
-```
-- Ensure `new_path` contains the filename
-- Any folders that don't exist in the path will be created
-
-5. **Multiple Actions**: Combine actions in one response if needed:
+e) 删除文件（Delete）：
 
 ```xml
 %s
 ```
+- 确保删除指定路径的文件。
 
-Remember:
-- Minimize explanations unless prompted. Focus on generating correct XML.
-- If the user types `~` in their response, do not replace or expand it.
-- Wait for the user to share the outputs with you before responding.]],
+f) 重命名文件（Rename）：
+
+```xml
+%s
+```
+- 确保 `new_path` 包含文件名。
+
+g) 复制文件（Copy）：
+
+```xml
+%s
+```
+- 确保 `new_path` 包含文件名。
+- 如果路径中存在不存在的文件夹，会自动创建这些文件夹。
+
+h) 移动文件（Move）：
+
+```xml
+%s
+```
+- 确保 `new_path` 包含文件名。
+- 如果路径中存在不存在的文件夹，会自动创建这些文件夹。
+
+5. **多个操作**：如果需要，可以在一个响应中组合多个操作：
+
+```xml
+%s
+```
+
+**注意**：
+- 除非用户要求，否则尽量减少解释，专注于生成正确的 XML。
+- 如果用户在路径中使用 `~`，不要替换或展开它。
+- 等待用户分享操作结果后再进行下一步响应。]],
       vim.fn.getcwd(),
       xml2lua.toXml({ tools = { schema[1] } }), -- Create
       xml2lua.toXml({ tools = { schema[2] } }), -- Read
@@ -439,7 +438,7 @@ Remember:
         self.chat:add_message({
           role = config.constants.USER_ROLE,
           content = fmt(
-            [[The output from the %s action for file `%s` is:
+            [[来自 `%s` 操作的文件 `%s` 输出为：
 
 ```%s
 %s
@@ -458,7 +457,7 @@ Remember:
       return self.chat:add_buf_message({
         role = config.constants.USER_ROLE,
         content = fmt(
-          [[There was an error running the %s action:
+          [[运行 `%s` 操作时发生错误：
 
 ```txt
 %s
@@ -472,7 +471,7 @@ Remember:
     rejected = function(self, action)
       return self.chat:add_buf_message({
         role = config.constants.USER_ROLE,
-        content = fmt("I rejected the %s action.\n\n", string.upper(action._attr.type)),
+        content = fmt("我已拒绝 `%s` 操作。\n\n", string.upper(action._attr.type)),
       })
     end,
   },

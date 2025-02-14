@@ -576,7 +576,7 @@ function Tools:add_error_to_chat(error)
   --- Alert the user that the error message has been shared
   self.chat:add_buf_message({
     role = config.constants.USER_ROLE,
-    content = "Please correct for the error message I've shared",
+    content = "请根据我分享的错误信息进行修正。",
   })
 
   if self.agent_config.opts and self.agent_config.opts.auto_submit_errors then

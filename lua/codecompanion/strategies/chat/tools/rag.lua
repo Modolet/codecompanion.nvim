@@ -68,36 +68,36 @@ return {
   },
   system_prompt = function(schema)
     return string.format(
-      [[### Retrieval Augmented Generated (RAG) Tool (`rag`)
+      [[### 检索增强生成（RAG）工具（`rag`）
 
-1. **Purpose**: This gives you the ability to access the internet to find information that you may not know.
+1. **目的**：让你能够访问互联网以查找你可能不知道的信息。
 
-2. **Usage**: Return an XML markdown code block for to search the internet or navigate to a specific URL.
+2. **使用方法**：返回一个 XML Markdown 代码块，用于搜索互联网或导航到指定的 URL。
 
-3. **Key Points**:
-  - **Use at your discretion** when you feel you don't have access to the latest information in order to answer the user's question
-  - This tool is expensive so you may wish to ask the user before using it
-  - Ensure XML is **valid and follows the schema**
-  - **Don't escape** special characters
-  - **Wrap queries and URLs in a CDATA block**, the text could contain characters reserved by XML
-  - Make sure the tools xml block is **surrounded by ```xml**
+3. **关键点**：
+   - **根据需要自行决定使用**，当你觉得无法获取最新信息以回答用户问题时，可以使用此工具。
+   - 此工具成本较高，因此在使用前你可以询问用户的意见。
+   - 确保 XML **有效且符合结构要求**。
+   - **不要转义**特殊字符。
+   - **将查询内容和 URL 包裹在 CDATA 区块中**，因为文本可能包含 XML 的保留字符。
+   - 确保工具的 XML 块被 **```xml** 包裹。
 
-4. **Actions**:
+4. **操作**：
 
-a) **Search the internet**:
-
-```xml
-%s
-```
-
-b) **Navigate to a URL**:
+a) **搜索互联网**：
 
 ```xml
 %s
 ```
 
-Remember:
-- Minimize explanations unless prompted. Focus on generating correct XML.]],
+b) **导航到 URL**：
+
+```xml
+%s
+```
+
+**注意**：
+- 除非用户要求，否则尽量减少解释，专注于生成正确的 XML。]],
       xml2lua.toXml({ tools = { schema[1] } }),
       xml2lua.toXml({ tools = { schema[2] } })
     )
@@ -111,11 +111,11 @@ Remember:
       self.chat:add_message({
         role = config.constants.USER_ROLE,
         content = string.format(
-          [[After the RAG tool completed, there was an error:
+          [[RAG 工具执行完成后发生错误：
 
-<error>
-%s
-</error>
+<error>  
+%s  
+</error>  
 ]],
           stderr
         ),
@@ -123,7 +123,7 @@ Remember:
 
       self.chat:add_buf_message({
         role = config.constants.USER_ROLE,
-        content = "I've shared the error message from the RAG tool with you.\n",
+        content = "我已将 RAG 工具的错误信息分享给你。\n",
       })
     end,
 
@@ -135,11 +135,11 @@ Remember:
       self.chat:add_message({
         role = config.constants.USER_ROLE,
         content = string.format(
-          [[Here is the content the RAG tool retrieved:
+          [[以下是 RAG 工具检索到的内容：
 
-<content>
-%s
-</content>
+<content>  
+%s  
+</content>  
 ]],
           stdout
         ),
@@ -147,7 +147,7 @@ Remember:
 
       self.chat:add_buf_message({
         role = config.constants.USER_ROLE,
-        content = "I've shared the content from the RAG tool with you.\n",
+        content = "我已将 RAG 工具的内容分享给你。\n",
       })
     end,
   },

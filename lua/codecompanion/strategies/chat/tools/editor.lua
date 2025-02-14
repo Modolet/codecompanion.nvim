@@ -269,68 +269,68 @@ return {
   },
   system_prompt = function(schema)
     return string.format(
-      [[## Editor Tool (`editor`) - Enhanced Guidelines
+      [[## 编辑器工具（`editor`）——增强指南
 
-### Purpose:
-- Modify the content of a Neovim buffer by adding, updating, or deleting code when explicitly requested.
+### 目的：
+- 在用户明确请求时，通过添加、更新或删除代码来修改 Neovim 缓冲区的内容。
 
-### When to Use:
-- Only invoke the Editor Tool when the user specifically asks (e.g., "can you update the code?" or "update the buffer...").
-- Use this tool solely for buffer edit operations. Other file tasks should be handled by the designated tools.
+### 使用场景：
+- 仅在用户明确要求时调用编辑器工具（例如，“你能更新代码吗？”或“更新缓冲区……”）。
+- 此工具仅用于缓冲区编辑操作，其他文件相关任务应使用指定的工具处理。
 
-### Execution Format:
-- Always return an XML markdown code block.
-- Always include the buffer number that the user has shared with you, in the `<buffer></buffer>` tag. If the user has not supplied this, prompt them for it.
-- Each code operation must:
-  - Be wrapped in a CDATA section to preserve special characters (CDATA sections ensure that characters like '<' and '&' are not interpreted as XML markup).
-  - Follow the XML schema exactly.
-- If several actions (add, update, delete) need to be performed sequentially, combine them in one XML block, within the <tool></tool> tags and with separate <action></action> entries.
+### 执行格式：
+- 始终以 XML Markdown 代码块的形式返回。
+- 必须包含用户提供的缓冲区编号，并放在 `<buffer></buffer>` 标签中。如果用户未提供缓冲区编号，请提示用户提供。
+- 每个代码操作必须：
+  - 使用 CDATA 区块包裹代码以保护特殊字符（CDATA 区块确保像 `<` 和 `&` 这样的字符不会被解释为 XML 标记）。
+  - 严格遵循 XML 结构。
+- 如果需要顺序执行多个操作（添加、更新、删除），应在一个 XML 块中组合这些操作，放在 `<tool></tool>` 标签内，并使用单独的 `<action></action>` 条目。
 
-### XML Schema:
-Each tool invocation should adhere to this structure:
+### XML 结构：
+每次工具调用都应遵循以下结构：
 
-a) **Add Action:**
+a) **添加操作（Add Action）：**
 ```xml
 %s
 ```
 
-If you'd like to replace the entire buffer's contents, pass in `<replace>true</replace>` in the action:
+如果需要替换整个缓冲区的内容，请在操作中传递 `<replace>true</replace>`：
 ```xml
 %s
 ```
 
-b) **Update Action:**
+b) **更新操作（Update Action）：**
 ```xml
 %s
 ```
-- Be sure to include both the start and end lines for the range to be updated.
+- 确保包含需要更新范围的起始行和结束行。
 
-c) **Delete Action:**
-```xml
-%s
-```
-
-If you'd like to delete the entire buffer's contents, pass in `<all>true</all>` in the action:
+c) **删除操作（Delete Action）：**
 ```xml
 %s
 ```
 
-d) **Multiple Actions** (If several actions (add, update, delete) need to be performed sequentially):
+如果需要删除整个缓冲区的内容，请在操作中传递 `<all>true</all>`：
 ```xml
 %s
 ```
 
-### Key Considerations:
-- **Safety and Accuracy:** Validate all code updates carefully.
-- **CDATA Usage:** Code is wrapped in CDATA blocks to protect special characters and prevent them from being misinterpreted by XML.
-- **Tag Order:** Use a consistent order by always listing <start_line> before <end_line> for update and delete actions.
-- **Line Numbers:** Note that line numbers are 1-indexed, so the first line is line 1, not line 0.
-- **Update Rule:** The update action first deletes the range defined in <start_line> to <end_line> (inclusive) and then adds the new code starting from <start_line>.
-- **Contextual Assumptions:** If no context is provided, assume that you should update the buffer with the code from your last response.
+d) **多个操作（Multiple Actions）：**（如果需要顺序执行多个操作，如添加、更新、删除）
+```xml
+%s
+```
 
-### Reminder:
-- Minimize extra explanations and focus on returning correct XML blocks with properly wrapped CDATA sections.
-- Always use the structure above for consistency.]],
+### 关键注意事项：
+- **安全性和准确性：** 仔细验证所有代码更新。
+- **CDATA 使用：** 代码必须用 CDATA 区块包裹，以保护特殊字符并防止其被 XML 误解。
+- **标签顺序：** 对于更新和删除操作，始终按顺序先列出 `<start_line>`，再列出 `<end_line>`。
+- **行号：** 行号从 1 开始计数，因此第一行是第 1 行，而不是第 0 行。
+- **更新规则：** 更新操作会先删除 `<start_line>` 到 `<end_line>` 范围内的内容（包含起止行），然后从 `<start_line>` 开始添加新代码。
+- **上下文假设：** 如果未提供上下文，假设需要用你上一条响应中的代码更新缓冲区。
+
+### 提醒：
+- 尽量减少额外解释，专注于返回正确的 XML 块，并正确包裹 CDATA 区块。
+- 始终使用上述结构以确保一致性。]],
       xml2lua.toXml({ tools = { schema[1] } }), -- Add
       xml2lua.toXml({ tools = { schema[2] } }), -- Add with replace
       xml2lua.toXml({ tools = { schema[3] } }), -- Update
