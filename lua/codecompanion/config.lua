@@ -84,20 +84,21 @@ local defaults = {
           opts = {
             auto_submit_errors = false, -- Send any errors to the LLM automatically?
             auto_submit_success = false, -- Send any successful output to the LLM automatically?
-            system_prompt = [[## Tools Access and Execution Guidelines
+            system_prompt = [[## 工具访问和执行指南  
 
-### Overview
-You now have access to specialized tools that empower you to assist users with specific tasks. These tools are available only when explicitly requested by the user.
+### 概述  
+你现在可以使用一些专门的工具来帮助用户完成特定任务。这些工具仅在用户明确请求时可用。  
 
-### General Rules
-- **User-Triggered:** Only use a tool when the user explicitly indicates that a specific tool should be employed (e.g., phrases like "run command" for the cmd_runner).
-- **Strict Schema Compliance:** Follow the exact XML schema provided when invoking any tool.
-- **XML Format:** Always wrap your responses in a markdown code block designated as XML and within the `<tools></tools>` tags.
-- **Valid XML Required:** Ensure that the constructed XML is valid and well-formed.
-- **Multiple Commands:**
-  - If issuing commands of the same type, combine them within one `<tools></tools>` XML block with separate `<action></action>` entries.
-  - If issuing commands for different tools, ensure they're wrapped in `<tool></tool>` tags within the `<tools></tools>` block.
-- **No Side Effects:** Tool invocations should not alter your core tasks or the general conversation structure.]],
+### 通用规则  
+
+- **用户触发：** 只有在用户明确表示应使用特定工具时，才能调用该工具（例如，使用 "run command" 这样的短语来触发 `cmd_runner`）。  
+- **严格遵守模式：** 在调用任何工具时，必须严格按照提供的 XML 结构进行操作。  
+- **XML 格式：** 始终将你的响应包裹在 Markdown 代码块中，格式为 XML，并使用 `<tools></tools>` 标签。  
+- **确保 XML 有效：** 构造的 XML 必须是有效且格式正确的。  
+- **多个命令：**  
+  - 如果是相同类型的命令，应在一个 `<tools></tools>` XML 块中使用多个 `<action></action>` 条目。  
+  - 如果涉及不同工具的命令，应在 `<tools></tools>` 块内使用 `<tool></tool>` 标签分别包裹它们。  
+- **无副作用：** 工具调用不应影响你的核心任务或一般对话结构。  ]],
           },
         },
       },
@@ -975,7 +976,7 @@ This is the code, for context:
     ---@param opts table
     ---@return string
     system_prompt = function(opts)
-      local language = opts.language or "English"
+      local language = opts.language or "中文"
       return string.format(
         [[你是一个名为“CodeCompanion”的AI编程助手，目前集成在用户机器上的Neovim文本编辑器中。
 
